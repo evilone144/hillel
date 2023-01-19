@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  tasks:
+          - name: "Install nginx"
+            apt:
+                    name: nginx
+                    state: latest
+                    update_cache: yes
+
+          - name: "Add docker repo"
+            apt_repository:
+                    repo: deb https://download.docker.com/linux/ubuntu focal stable
+                    state: present
+
+          - name: Install docker
+            apt: update_cache=yes name={{ item }} state=latest
+            loop: [ 'docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose' ]
+
+          - name: "Add vlad user"
+            user:
+                    name: v.shybalov
+                    groups: docker
+                    append: yes
+
+          - name: "Get nginx ver, and print it."
+            shell: '/usr/sbin/nginx -v'
+            register: nginx_ver
+
+          - debug:
+                  var: nginx_ver.stderr

@@ -28,3 +28,9 @@
 
           - debug:
                   var: nginx_ver.stderr
+
+          - name: restart docker
+            service:
+                    name: docker
+                    state: started
+                    enabled: true
